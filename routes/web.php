@@ -11,6 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+use App\Services\TenantManager;
+
+Route::group([
+    'prefex'        => '/{tenant}',
+    'middleware'    => \App\Http\Middleware\IdentifyTenant::class,
+    'as'            => 'tenant:',
+], function () {
+    Route::apiResource('post', 'PostController');
+    Route::get('/test', function() {
+        dd(app(TenantManager::class));
+    });
 });
+
+Route::apiResource('tenant', 'TenantController');
